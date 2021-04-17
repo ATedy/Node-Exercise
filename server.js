@@ -9,29 +9,52 @@ const app = express();
 
 //when server is ready it calls the callback function
 app.listen(3000, function () {
-  console.log("Running on port 3000");
+  console.log("Running on port 3000 and listening");
 });
 
-app.get("/profiles/eric", (req, res) => {
-  //we are sending a res to the server from the students array
-  const student = students.find((student) => student.username === "eric");
-  res.json(student);
-});
+app.get("/profiles/:name/image", (req, res) => {
+  let username = req.params.name;
 
-app.get("/profiles/eric/image", (req, res) => {
   let size = req.query.size;
+  //if no queries giving
   if (!size) {
-    res.sendFile(__dirname + `/images/eric-large.jpg`);
+    size = "large";
   }
+
   switch (size) {
     case "small":
     case "large":
-      res.sendFile(__dirname + `/images/eric-${size}.jpg`);
+      res.sendFile(__dirname + `/images/${username}-${size}.jpg`);
       break;
-    // default:
-    //   res.sendStatus(404);
-    //   break;
+    default:
+      res.sendStatus(404);
+      break;
   }
+});
 
-  // res.sendFile(__dirname + `/images/eric-${size}.jpg`);
+app.get("/profiles/:name", (req, res) => {
+  let username = req.params.name;
+
+  const student = students.find((student) => student.username === username);
+  if (!student) {
+    res.sendStatus(404);
+    return;
+  }
+  res.json(student);
+});
+
+// app.get("/profiles/eric", (req, res) => {
+//   //we are sending a res to the server from the students array
+//   const student = students.find((student) => student.username === "eric");
+//   res.json(student);
+// });
+
+app.get("/profiles", (req, res) => {
+  const newExtendedStudents = students.map((student) => {
+    student["largeImage"] = `/profiles/${student.username}/image?size=large`;
+    student["smallImage"] = `/profiles/${student.username}/image?size=small`;
+    student["profile"] = `/profiles/${student.username}`;
+    return student;
+  });
+  res.json(newExtendedStudents);
 });
