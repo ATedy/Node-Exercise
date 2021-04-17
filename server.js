@@ -19,5 +19,19 @@ app.get("/profiles/eric", (req, res) => {
 });
 
 app.get("/profiles/eric/image", (req, res) => {
-  res.sendFile(__dirname + "/images/eric-large.jpg");
+  let size = req.query.size;
+  if (!size) {
+    res.sendFile(__dirname + `/images/eric-large.jpg`);
+  }
+  switch (size) {
+    case "small":
+    case "large":
+      res.sendFile(__dirname + `/images/eric-${size}.jpg`);
+      break;
+    // default:
+    //   res.sendStatus(404);
+    //   break;
+  }
+
+  // res.sendFile(__dirname + `/images/eric-${size}.jpg`);
 });
