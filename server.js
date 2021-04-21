@@ -12,7 +12,7 @@ app.listen(3000, function () {
   console.log("Running on port 3000 and listening");
 });
 
-app.get("/profiles/:name/image", (req, res) => {
+app.get("/profile/:name/image", (req, res) => {
   let username = req.params.name;
 
   let size = req.query.size;
